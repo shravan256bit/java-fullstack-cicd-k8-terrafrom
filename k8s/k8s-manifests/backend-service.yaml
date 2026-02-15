@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: auth-app
+spec:
+  type: ClusterIP
+  selector:
+    app: backend
+  ports:
+  - port: 8081 #this is port exposed by k8s other service will connect through this port
+    targetPort: 8080 #container port

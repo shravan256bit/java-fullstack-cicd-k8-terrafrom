@@ -1,0 +1,33 @@
+# ======================
+# Terraform
+# ======================
+terraform-infra/.terraform/
+terraform-infra/*.tfstate
+terraform-infra/*.tfstate.*
+terraform-infra/.terraform.lock.hcl
+
+# ======================
+# React
+# ======================
+frontend/node_modules/
+frontend/build/
+frontend/.env*
+
+# ======================
+# Spring Boot
+# ======================
+backend/auth/target/
+*.log
+
+# ======================
+# IDE
+# ======================
+.idea/
+.vscode/
+*.iml
+
+# ======================
+# OS
+# ======================
+.DS_Store
+Thumbs.db
