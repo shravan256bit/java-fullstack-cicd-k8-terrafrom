@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: backend
-  namespace: auth-app
 spec:
   replicas: 2
   selector:
@@ -15,9 +14,9 @@ spec:
     spec:
       containers:
       - name: backend
-        image: shravan256bit/auth-backend:v4
+        image: shravan256bit/auth-backend:v6
         ports:
-        - containerPort: 8081
+        - containerPort: 8080
         envFrom:
         - secretRef:
             name: db-secret
