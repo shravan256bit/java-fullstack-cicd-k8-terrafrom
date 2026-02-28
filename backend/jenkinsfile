@@ -19,7 +19,14 @@ pipeline {
                 url: "https://github.com/shravan256bit/java-fullstack-cicd-k8-terrafrom.git"
             }
         }
+
         stage('Build - Maven') {
+            when {
+                anyOf {
+                    changeset "backend/**"
+                    changeset "helm-charts/**"
+                }
+            }
             steps {
                 dir('backend/auth') {
                     sh 'mvn clean package -DskipTests'
@@ -28,6 +35,12 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
+            when {
+                anyOf {
+                    changeset "backend/**"
+                    changeset "helm-charts/**"
+                }
+            }
             steps {
                 dir('backend/auth') {
                     withSonarQubeEnv('sonarqube-server') {
@@ -38,6 +51,12 @@ pipeline {
         }
 
         stage('Quality Gate') {
+            when {
+                anyOf {
+                    changeset "backend/**"
+                    changeset "helm-charts/**"
+                }
+            }
             steps {
                 timeout(time: 2, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
@@ -46,20 +65,40 @@ pipeline {
         }
 
         stage('Build Docker Image') {
+            when {
+                anyOf {
+                    changeset "backend/**"
+                    changeset "helm-charts/**"
+                }
+            }
             steps {
                 dir('backend/auth') {
                     sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
                 }
             }
         }
+
         stage('trivy scan'){
+            when {
+                anyOf {
+                    changeset "backend/**"
+                    changeset "helm-charts/**"
+                }
+            }
             steps{
-                sh """ 
+                sh """
                 trivy image --exit-code 1 --severity HIGH,CRITICAL $IMAGE_NAME:$IMAGE_TAG
                 """
             }
         }
+
         stage('push to hub'){
+            when {
+                anyOf {
+                    changeset "backend/**"
+                    changeset "helm-charts/**"
+                }
+            }
             steps{
                 withCredentials([usernamePassword(
                     credentialsId: 'docker-cri',
@@ -73,7 +112,11 @@ pipeline {
                     }
             }
         }
+
         stage('Update Helm Values') {
+            when {
+                changeset "backend/**"
+            }
             steps {
                 withCredentials([string(credentialsId: 'git-token', variable: 'GIT_TOKEN')]) {
                     sh '''
@@ -84,6 +127,7 @@ pipeline {
                         git add values.yaml
                         git commit -m "Update backend image to $IMAGE_TAG"
                         git remote set-url origin https://$GIT_TOKEN@github.com/shravan256bit/java-fullstack-cicd-k8-terrafrom.git
+                        git pull origin main --rebase
                         git push origin main
                     '''
                 }
