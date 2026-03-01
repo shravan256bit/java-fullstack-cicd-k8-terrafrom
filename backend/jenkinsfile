@@ -123,6 +123,7 @@ pipeline {
                     sh '''
                         cd helm-charts
                         ls
+                        pwd
                         git config user.email "shravanoncloud6@gmail.com"
                         git config user.name "shravan256bit"
                         yq -i ".backend.image.tag = \\"$IMAGE_TAG\\"" values.yaml
