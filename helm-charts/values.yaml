@@ -2,7 +2,7 @@ backend:
   replicaCount: 2
   image:
     repository: shravan256bit/auth-backend
-    tag: "34"
+    tag: "36"
     pullPolicy: IfNotPresent
   containerPort: 8080
 frontend:
