@@ -59,6 +59,7 @@ pipeline {
                 withCredentials([string(credentialsId: 'git-token', variable: 'GIT_TOKEN')]) {
                     sh '''
                         cd helm-charts
+                        pwd
                         git config user.email "shravanoncloud6@gmail.com"
                         git config user.name "shravan256bit"
                         yq -i ".frontend.image.tag = \\"$IMAGE_TAG\\"" values.yaml
