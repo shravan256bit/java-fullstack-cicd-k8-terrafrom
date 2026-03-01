@@ -16,15 +16,27 @@ pipeline {
         }
 
         stage('Build Docker Image') {
-
+            when {
+                anyOf {
+                    changeset "frontend/**"
+                    changeset "helm-charts/**"
+                }
+            }
             steps {
                 dir('frontend') {
                     sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
                 }
             }
         }
-        stage('Push to DockerHub') {
 
+
+        stage('Push to DockerHub') {
+            when {
+                anyOf {
+                    changeset "frontend/**"
+                    changeset "helm-charts/**"
+                }
+            }
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'docker-cri',
@@ -40,7 +52,9 @@ pipeline {
         }
 
         stage('Update Helm Values') {
-
+            when {
+                changeset "frontend/**"
+            }
             steps {
                 withCredentials([string(credentialsId: 'git-token', variable: 'GIT_TOKEN')]) {
                     sh '''
@@ -55,11 +69,6 @@ pipeline {
                         git push origin main
                     '''
                 }
-            }
-        }
-        stage('clean up'){
-            steps{
-                sh 'docker system prune -af || true'
             }
         }
     }
