@@ -20,7 +20,7 @@ export default function Register() {
   return (
     <div className="page">
       <div className="card">
-        <h2>Register Please 📝</h2>
+        <h2>Register Please !! 📝</h2>
 
         <input
           placeholder="Email"
